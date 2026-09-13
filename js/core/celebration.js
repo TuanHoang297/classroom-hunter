@@ -27,7 +27,58 @@ class CelebrationEngine {
   }
 
   triggerLuckyBurst() {
-    this.explode('lucky');
+    this.explode('godsave');
+    this.createHolyFlash();
+  }
+
+  createHolyFlash() {
+    // Flash Overlay
+    const flash = document.createElement('div');
+    flash.style.position = 'fixed';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100vw';
+    flash.style.height = '100vh';
+    flash.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(253,224,71,0.6) 50%, rgba(0,0,0,0) 100%)';
+    flash.style.zIndex = '9998';
+    flash.style.pointerEvents = 'none';
+    flash.style.opacity = '1';
+    flash.style.transition = 'opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
+    flash.style.mixBlendMode = 'overlay';
+    document.body.appendChild(flash);
+    
+    // Giant God Save Text Effect
+    const text = document.createElement('div');
+    text.textContent = 'GOD SAVE';
+    text.style.position = 'fixed';
+    text.style.top = '50%';
+    text.style.left = '50%';
+    text.style.transform = 'translate(-50%, -50%) scale(0.3)';
+    text.style.fontSize = '8rem';
+    text.style.fontWeight = '900';
+    text.style.color = '#fff';
+    text.style.textShadow = '0 0 40px #fde047, 0 0 80px #f59e0b, 0 0 150px #ea580c';
+    text.style.zIndex = '10000';
+    text.style.pointerEvents = 'none';
+    text.style.opacity = '1';
+    text.style.letterSpacing = '10px';
+    text.style.transition = 'all 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
+    document.body.appendChild(text);
+
+    // Force reflow
+    void flash.offsetWidth;
+    void text.offsetWidth;
+
+    // Animate out
+    flash.style.opacity = '0';
+    text.style.transform = 'translate(-50%, -50%) scale(1.8)';
+    text.style.opacity = '0';
+    text.style.letterSpacing = '30px';
+
+    setTimeout(() => {
+      flash.remove();
+      text.remove();
+    }, 2000);
   }
 
   triggerEpicVictory() {
@@ -41,23 +92,29 @@ class CelebrationEngine {
     if (!this.canvas || !this.ctx) this.init();
     if (!this.canvas || !this.ctx) return;
 
-    const count = type === 'lucky' ? 140 : 100;
-    const colors = type === 'lucky' 
-      ? ['#10b981', '#34d399', '#6ee7b7', '#f59e0b', '#fbbf24', '#ffffff'] // Emerald + Gold
-      : ['#06b6d4', '#8b5cf6', '#ec4899', '#3b82f6', '#f59e0b', '#10b981']; // Vibrant Neon
+    let count = 100;
+    let colors = ['#06b6d4', '#8b5cf6', '#ec4899', '#3b82f6', '#f59e0b', '#10b981']; // Vibrant Neon
+    
+    if (type === 'godsave') {
+      count = 350; // Massive explosion
+      colors = ['#fde047', '#f59e0b', '#ffffff', '#fbbf24', '#ea580c', '#eab308']; // Golden & Holy White
+    }
 
     const originX = window.innerWidth / 2;
     const originY = window.innerHeight * 0.45;
 
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const velocity = 8 + Math.random() * 18;
+      const velocity = type === 'godsave' 
+        ? 15 + Math.random() * 30 
+        : 8 + Math.random() * 18;
+        
       this.particles.push({
         x: originX,
         y: originY,
         vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity - 4,
-        size: 6 + Math.random() * 8,
+        vy: Math.sin(angle) * velocity - (type === 'godsave' ? 8 : 4),
+        size: (type === 'godsave' ? 8 : 6) + Math.random() * 10,
         color: colors[Math.floor(Math.random() * colors.length)],
         rotation: Math.random() * 360,
         rotationSpeed: (Math.random() - 0.5) * 12,
