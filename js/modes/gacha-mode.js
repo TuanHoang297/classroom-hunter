@@ -69,8 +69,11 @@ export class GachaMode {
           </svg>
         </div>
         
-        <!-- Name Display Overlay -->
-        <div id="gachaNameDisplay" style="position: absolute; top: 15%; width: 100%; text-align: center; font-size: 2.2rem; font-weight: 800; color: #fff; text-shadow: 0 0 15px #0ea5e9, 0 0 30px #0ea5e9; opacity: 0; transform: translateY(10px); transition: all 0.2s ease; z-index: 5; letter-spacing: 2px;"></div>
+        <!-- Orbit Container for Floating Names -->
+        <div id="gachaOrbitContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4;"></div>
+
+        <!-- Name Display Overlay (For final suck-in animation) -->
+        <div id="gachaNameDisplay" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; font-size: 2.2rem; font-weight: 800; color: #fff; text-shadow: 0 0 15px #0ea5e9, 0 0 30px #0ea5e9; opacity: 0; transition: all 0.2s ease; z-index: 5; letter-spacing: 2px;"></div>
 
         <!-- White Flash Overlay -->
         <div class="gacha-flash-overlay" id="gachaFlash"></div>
@@ -96,44 +99,131 @@ export class GachaMode {
 
     if (!this.chestWrap) this.render();
     
-    // Giai đoạn 1: Bắt đầu rung và vòng ma thuật quay
     this.chestWrap.classList.add('rumble');
     if (this.magicCircle) this.magicCircle.classList.add('summoning');
     
-    if (this.nameDisplay) {
-      this.nameDisplay.style.opacity = '1';
-      this.nameDisplay.style.transform = 'translateY(0)';
+    this.orbitContainer = this.container.querySelector('#gachaOrbitContainer');
+    this.nameDisplay = this.container.querySelector('#gachaNameDisplay');
+
+    if (this.orbitContainer) {
+      this.orbitContainer.innerHTML = '';
+      this.orbitingNames = [];
+      const numOrbits = Math.min(10, this.students.length > 0 ? this.students.length : 10);
+      for(let i=0; i<numOrbits; i++) {
+        const el = document.createElement('div');
+        el.className = 'gacha-orbit-name';
+        el.textContent = this.students && this.students.length > 0 ? this.students[Math.floor(Math.random() * this.students.length)] : '???';
+        el.style.position = 'absolute';
+        el.style.left = '50%';
+        el.style.top = '50%';
+        el.style.color = 'rgba(255, 255, 255, 0.8)';
+        el.style.fontWeight = '800';
+        el.style.fontSize = '1.3rem';
+        el.style.textShadow = '0 0 10px #0ea5e9, 0 0 20px #0ea5e9';
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
+        el.style.whiteSpace = 'nowrap';
+        el.style.transform = 'translate(-50%, -50%)';
+        this.orbitContainer.appendChild(el);
+        
+        this.orbitingNames.push({
+          el,
+          angle: (Math.PI * 2 * i) / numOrbits,
+          speed: 0.04 + Math.random() * 0.04,
+          radiusX: 130 + Math.random() * 60,
+          radiusY: 40 + Math.random() * 40,
+          zOffset: Math.random() * Math.PI
+        });
+      }
+      
+      setTimeout(() => {
+        if (!this.isRunning) return;
+        this.orbitingNames.forEach(o => {
+          o.el.style.transition = 'opacity 0.5s ease';
+          o.el.style.opacity = '1';
+        });
+      }, 100);
     }
 
-    // Tiếng tim đập nhanh dần
-    let count = 0;
-    
-    // Name rolling interval
-    this.nameRollInterval = setInterval(() => {
-      if (this.nameDisplay && this.students && this.students.length > 0) {
-        this.nameDisplay.textContent = this.students[Math.floor(Math.random() * this.students.length)];
-      }
-    }, 60);
+    const animateOrbit = () => {
+      if (!this.isRunning) return;
+      
+      if (this.orbitingNames) {
+        this.orbitingNames.forEach(o => {
+          if (o.suckedIn) return;
+          o.angle += o.speed;
+          const x = Math.cos(o.angle) * o.radiusX;
+          const y = Math.sin(o.angle) * o.radiusY - 40; 
+          
+          const depth = Math.sin(o.angle + o.zOffset);
+          const scale = 0.6 + (depth + 1) * 0.35; 
+          const opacity = 0.3 + (depth + 1) * 0.35; 
 
+          o.el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
+          if (o.el.style.opacity !== '0') {
+             o.el.style.opacity = opacity.toString();
+             o.el.style.zIndex = depth > 0 ? '5' : '3';
+          }
+          
+          if (Math.random() < 0.04 && this.students && this.students.length > 0) {
+            o.el.textContent = this.students[Math.floor(Math.random() * this.students.length)];
+          }
+        });
+      }
+      this.orbitAnimation = requestAnimationFrame(animateOrbit);
+    };
+    this.orbitAnimation = requestAnimationFrame(animateOrbit);
+
+    let count = 0;
     const interval = setInterval(() => {
       audioSynthesizer.playHeartbeat(50 + count * 6);
       count++;
       
-      // Giai đoạn 2: Rung lắc dữ dội hơn
       if (count === 6) {
         this.chestWrap.classList.remove('rumble');
         this.chestWrap.classList.add('intense-shake');
+        
+        // Speed up orbit
+        if (this.orbitingNames) {
+          this.orbitingNames.forEach(o => {
+            o.speed *= 1.8;
+            o.el.style.color = '#fde047';
+            o.el.style.textShadow = '0 0 10px #f59e0b, 0 0 20px #f59e0b';
+          });
+        }
       }
 
-      // Giai đoạn 3: Bùng nổ (Burst + Flash sáng chói)
+      if (count === 9) {
+        // Suck orbiting names into chest
+        if (this.orbitingNames) {
+           this.orbitingNames.forEach(o => {
+             o.suckedIn = true;
+             o.el.style.transition = 'all 0.3s cubic-bezier(0.5, 0, 1, 1)';
+             o.el.style.opacity = '0';
+             o.el.style.transform = `translate(-50%, -50%) translate(0px, 0px) scale(0)`;
+           });
+        }
+        
+        // Show target student name falling from above into the chest
+        if (this.nameDisplay) {
+          this.nameDisplay.textContent = targetStudent;
+          this.nameDisplay.style.transition = 'none';
+          this.nameDisplay.style.opacity = '0';
+          this.nameDisplay.style.transform = 'translate(-50%, -50%) translateY(-150px) scale(2)';
+          this.nameDisplay.style.color = '#fff';
+          this.nameDisplay.style.textShadow = '0 0 20px #fde047, 0 0 40px #f59e0b, 0 0 60px #f59e0b';
+          
+          void this.nameDisplay.offsetWidth; // force reflow
+          
+          this.nameDisplay.style.transition = 'all 0.35s cubic-bezier(0.5, 0, 1, 1)';
+          this.nameDisplay.style.opacity = '1';
+          this.nameDisplay.style.transform = 'translate(-50%, -50%) translateY(10px) scale(0)';
+        }
+      }
+
       if (count > 9) {
         clearInterval(interval);
-        if (this.nameRollInterval) clearInterval(this.nameRollInterval);
-        
-        if (this.nameDisplay) {
-          this.nameDisplay.style.opacity = '0';
-          this.nameDisplay.style.transform = 'translateY(-20px)';
-        }
+        if (this.orbitAnimation) cancelAnimationFrame(this.orbitAnimation);
         
         this.chestWrap.classList.remove('intense-shake');
         this.chestWrap.classList.add('burst');
@@ -143,23 +233,24 @@ export class GachaMode {
         
         audioSynthesizer.playTargetLockAlarm();
 
-        // Đợi màn hình chớp sáng trắng rồi từ từ hiện thông báo
         setTimeout(() => {
           this.isRunning = false;
           this.chestWrap.classList.remove('burst');
           if (this.magicCircle) this.magicCircle.classList.remove('summoning', 'climax');
           if (this.flashOverlay) this.flashOverlay.classList.remove('active');
+          if (this.orbitContainer) this.orbitContainer.innerHTML = '';
           
           if (onComplete) onComplete(targetStudent);
         }, 1200); 
       }
-    }, 240);
+    }, 280);
   }
 
   stop() {
     this.isRunning = false;
-    if (this.nameRollInterval) clearInterval(this.nameRollInterval);
+    if (this.orbitAnimation) cancelAnimationFrame(this.orbitAnimation);
     if (this.nameDisplay) this.nameDisplay.style.opacity = '0';
+    if (this.orbitContainer) this.orbitContainer.innerHTML = '';
     if (this.chestWrap) this.chestWrap.classList.remove('rumble', 'intense-shake', 'burst');
     if (this.magicCircle) this.magicCircle.classList.remove('summoning', 'climax');
     if (this.flashOverlay) this.flashOverlay.classList.remove('active');
