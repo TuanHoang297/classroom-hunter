@@ -28,3 +28,6 @@ Classroom Hunter là một ứng dụng gọi tên học sinh ngẫu nhiên mang
 ## 📦 Cách Chạy Ứng Dụng
 Ứng dụng hoàn toàn chạy trên nền tảng Web tĩnh (HTML/CSS/JS thuần).
 Bạn chỉ cần mở file `index.html` trong trình duyệt web bất kỳ hoặc đưa lên hosting như Vercel/GitHub Pages là có thể sử dụng ngay lập tức!
+
+---
+**Tác giả:** TuanNH
