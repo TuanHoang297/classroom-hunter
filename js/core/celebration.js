@@ -31,7 +31,36 @@ class CelebrationEngine {
     this.createHolyFlash();
   }
 
+  ensureKeyframes() {
+    const styleId = 'god-save-keyframes';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        @keyframes godSaveFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes godSaveSpinRays { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes godSavePopIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        @keyframes godSaveRubberBand {
+          0% { transform: scale3d(0, 0, 0); }
+          30% { transform: scale3d(1.25, 0.75, 1); }
+          40% { transform: scale3d(0.75, 1.25, 1); }
+          50% { transform: scale3d(1.15, 0.85, 1); }
+          65% { transform: scale3d(0.95, 1.05, 1); }
+          75% { transform: scale3d(1.05, 0.95, 1); }
+          100% { transform: scale3d(1, 1, 1); }
+        }
+        @keyframes godSaveFlyUp {
+          0% { transform: translateY(0) scale(0.5); opacity: 1; }
+          100% { transform: translateY(-120vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   createHolyFlash() {
+    this.ensureKeyframes();
+    
     // 1. Dark overlay to emphasize the light
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
@@ -79,33 +108,6 @@ class CelebrationEngine {
     
     textWrap.appendChild(text);
 
-    // 4. Add keyframes dynamically
-    const styleId = 'god-save-keyframes';
-    let style = document.getElementById(styleId);
-    if (!style) {
-      style = document.createElement('style');
-      style.id = styleId;
-      style.textContent = `
-        @keyframes godSaveFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-        @keyframes godSaveSpinRays { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes godSavePopIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        @keyframes godSaveRubberBand {
-          0% { transform: scale3d(0, 0, 0); }
-          30% { transform: scale3d(1.25, 0.75, 1); }
-          40% { transform: scale3d(0.75, 1.25, 1); }
-          50% { transform: scale3d(1.15, 0.85, 1); }
-          65% { transform: scale3d(0.95, 1.05, 1); }
-          75% { transform: scale3d(1.05, 0.95, 1); }
-          100% { transform: scale3d(1, 1, 1); }
-        }
-        @keyframes godSaveFlyUp {
-          0% { transform: translateY(0) scale(0.5); opacity: 1; }
-          100% { transform: translateY(-120vh) scale(1.5) rotate(360deg); opacity: 0; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
     document.body.appendChild(overlay);
     document.body.appendChild(rays);
     document.body.appendChild(textWrap);
@@ -147,7 +149,33 @@ class CelebrationEngine {
   }
 
   triggerEpicVictory() {
-    this.explode('default');
+    this.explode('epic');
+    this.ensureKeyframes();
+    
+    // Flying 🎊 emojis for Epic Victory
+    const emojis = ['🎊', '🎊', '✨', '🎊', '🎉'];
+    const flyingElements = [];
+    for(let i=0; i<15; i++) {
+        const el = document.createElement('div');
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.position = 'fixed';
+        el.style.left = (Math.random() * 100) + 'vw';
+        el.style.bottom = '-10vh';
+        el.style.fontSize = (2 + Math.random() * 3) + 'rem';
+        el.style.zIndex = '9999';
+        el.style.pointerEvents = 'none';
+        
+        // Ensure the animation exists (using the one from God Save if available, or a fallback)
+        el.style.animation = `godSaveFlyUp ${2 + Math.random()*2}s ease-in-out forwards`;
+        el.style.animationDelay = (Math.random() * 0.5) + 's';
+        
+        document.body.appendChild(el);
+        flyingElements.push(el);
+    }
+    
+    setTimeout(() => {
+        flyingElements.forEach(el => el.remove());
+    }, 4000);
   }
 
   /**
