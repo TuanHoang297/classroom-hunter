@@ -427,6 +427,25 @@ class App {
       this.dom.fateBackTargetName.textContent = student;
     }
 
+    // Determine the active mode to change the card front title contextually
+    const activeMode = classroomStore.getState().activeMode;
+    const fateFrontTitle = this.dom.fateModal.querySelector('.fate-front .fate-card-title');
+    if (fateFrontTitle) {
+      if (activeMode === 'radar') {
+        fateFrontTitle.textContent = '🎯 MỤC TIÊU ĐÃ KHÓA 🎯';
+      } else if (activeMode === 'grid') {
+        fateFrontTitle.textContent = '🔥 GHẾ NÓNG GỌI TÊN 🔥';
+      } else if (activeMode === 'gacha') {
+        fateFrontTitle.textContent = '📦 RƯƠNG ĐÃ MỞ 📦';
+      } else {
+        fateFrontTitle.textContent = '🎯 KẾT QUẢ 🎯';
+      }
+    }
+
+    let backStatusNormal = '🎯 MỤC TIÊU PHẢI TRẢ LỜI 🎯';
+    if (activeMode === 'grid') backStatusNormal = '🔥 XIN MỜI LÊN BẢNG 🔥';
+    if (activeMode === 'gacha') backStatusNormal = '📦 TRÚNG THƯỞNG LÊN BẢNG 📦';
+
     // Configure Back Face based on fate
     if (fate.isLucky) {
       this.dom.fateBackFace?.classList.add('fate-lucky-escape');
@@ -445,7 +464,7 @@ class App {
       classroomStore.markAsLucky(student);
     } else {
       this.dom.fateBackFace?.classList.add('fate-must-answer');
-      if (this.dom.fateBackStatusHeader) this.dom.fateBackStatusHeader.textContent = '🎯 MỤC TIÊU PHẢI TRẢ LỜI 🎯';
+      if (this.dom.fateBackStatusHeader) this.dom.fateBackStatusHeader.textContent = backStatusNormal;
       if (this.dom.fateBadgeTitle) {
         this.dom.fateBadgeTitle.textContent = 'MỜI LÊN BẢNG LÀM BÀI!';
         this.dom.fateBadgeTitle.className = 'fate-stamp stamp-must-answer';
