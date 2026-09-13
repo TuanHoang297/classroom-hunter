@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Hunter - Gameshow Chọn Tên Học Sinh Lên Bảng Kịch Tính & Bùa Miễn Tử</title>
+  <meta name="description" content="Ứng dụng chọn ngẫu nhiên học sinh lên bảng giải bài kịch tính phong cách gameshow truyền hình, tích hợp Radar vệ tinh, Ghế nóng tia chớp và Bùa Miễn Tử ly kỳ.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Favicon Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+
+  <!-- Fullscreen Confetti Particle Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Sticky Top Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🎯</div>
+        <div>
+          <h1 class="brand-title">CLASSROOM HUNTER</h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sound Toggle -->
+        <button class="btn-icon" id="btnToggleSound" title="Bật / Tắt âm thanh" aria-label="Bật tắt âm thanh">
+          <svg id="soundIconOn" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <svg id="soundIconOff" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        </button>
+
+        <!-- Fullscreen Button -->
+        <button class="btn-icon" id="btnFullscreen" title="Toàn màn hình máy chiếu" aria-label="Toàn màn hình">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
+
+        <!-- Clear / Reset Roster Button -->
+        <button class="btn btn-danger" id="btnClearRoster" title="Làm mới để nhập danh sách lớp khác" style="padding: 10px 16px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          Làm Mới
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container: 1-Column Full-Width Stage -->
+  <main class="app-container">
+    
+    <!-- Grand Stage Arena -->
+    <section class="stage-panel">
+      <div class="glass-panel stage-card">
+        
+        <!-- Top Stage Bar: Mode Selector -->
+        <div class="stage-top-bar">
+          <div class="mode-tabs">
+            <button class="mode-tab-btn active" data-mode="radar">
+              <span>🛰️ Radar Vệ Tinh</span>
+            </button>
+            <button class="mode-tab-btn" data-mode="grid">
+              <span>⚡ Ghế Nóng Tia Chớp</span>
+            </button>
+            <button class="mode-tab-btn" data-mode="gacha">
+              <span>🎁 Rương Thần Bí</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Center Stage View -->
+        <div class="stage-center-view">
+          
+          <!-- Mode 1: Radar View -->
+          <div id="radarView" style="width: 100%; display: block; text-align: center;">
+            <div class="radar-container" id="radarContainer">
+              <canvas id="radarCanvas"></canvas>
+              <div class="radar-beam" id="radarBeam"></div>
+              <div class="radar-crosshair" id="radarCrosshair"></div>
+            </div>
+          </div>
+
+          <!-- Mode 2: Cyber Grid View -->
+          <div id="gridView" style="width: 100%; display: none;">
+            <div class="cyber-grid-stage" id="gridContainer"></div>
+          </div>
+
+          <!-- Mode 3: Gacha Chest View -->
+          <div id="gachaView" style="width: 100%; display: none;">
+            <div id="gachaContainer"></div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Stage Bar: Grand Launch Action -->
+        <div class="stage-bottom-bar">
+          <button class="btn-hunt-mega" id="btnLaunchHunt">
+            🎯 TRUY TÌM HỌC SINH
+          </button>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px;">
+            Bấm nút để kích hoạt vòng xoay phán quyết &bull; Phím tắt <span style="display:inline-block; padding: 2px 7px; background: rgba(255,255,255,0.1); border-radius: 4px; color: var(--gold-bright);">Space</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom Control Bar (Utility Dock) -->
+    <section class="bottom-control-bar">
+      <!-- Left: Roster button & Drawer Toggle -->
+      <div class="bottom-bar-left">
+        <button class="btn btn-ghost" id="btnToggleDrawer" title="Xem danh sách chi tiết các bạn trong lớp">
+          <span>👥 Danh Sách:</span>
+          <span class="badge-count" id="badgeRemainingCount">40 bạn</span>
+          <span id="drawerArrow" style="font-size: 0.75rem; margin-left: 2px;">▼</span>
+        </button>
+        <button class="btn btn-gold" id="btnOpenBulkModal">
+          ✏️ Nhập / Sửa Danh Sách
+        </button>
+      </div>
+
+      <!-- Middle: Quick Stats Pills -->
+      <div class="bottom-bar-stats">
+        <div class="stat-pill cyan">
+          <span>Chưa gọi:</span>
+          <strong class="stat-pill-num" id="statRemaining">40</strong>
+        </div>
+        <span style="color: rgba(255,255,255,0.2);">|</span>
+        <div class="stat-pill green">
+          <span>Đã gọi:</span>
+          <strong class="stat-pill-num" id="statCalled">0</strong>
+        </div>
+        <span style="color: rgba(255,255,255,0.2);">|</span>
+        <div class="stat-pill gold">
+          <span>🛡️ Thoát nạn:</span>
+          <strong class="stat-pill-num" id="statLucky">0</strong>
+        </div>
+      </div>
+
+      <!-- Right: Settings Inline -->
+      <div class="bottom-bar-right">
+        <!-- Luck Escape Setting -->
+        <div class="form-group-inline">
+          <label for="luckRateSelect" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
+            🛡️ Bùa Miễn Tử:
+          </label>
+          <select id="luckRateSelect" class="select-cyber">
+            <option value="0">Tắt (0%)</option>
+            <option value="0.10">Hiếm (10%)</option>
+            <option value="0.15" selected>15% (Vừa)</option>
+            <option value="0.25">Cao (25%)</option>
+          </select>
+        </div>
+
+        <!-- Elimination Toggle -->
+        <div class="form-group-inline">
+          <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
+            🚫 Không lặp:
+          </label>
+          <label class="switch" title="Khi bật, bạn học sinh đã được gọi sẽ không bị gọi lại trong tiết học này">
+            <input type="checkbox" id="eliminationToggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collapsible Student Chips Drawer -->
+    <section class="roster-drawer" id="rosterDrawer">
+      <div class="roster-drawer-header">
+        <div class="roster-drawer-title">
+          <span>📋 Chi Tiết Danh Sách Học Sinh</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">(Bấm dấu × để xóa bạn nếu nghỉ học)</span>
+        </div>
+        <div class="quick-add-wrap">
+          <input type="text" id="quickAddInput" class="input-cyber" placeholder="Thêm tên học sinh...">
+          <button class="btn btn-primary" id="btnQuickAdd" style="padding: 8px 16px;">+ Thêm</button>
+        </div>
+      </div>
+      
+      <!-- Student Chips Container -->
+      <div class="students-chip-container" id="studentsChipContainer">
+        <!-- Dynamically rendered via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- REVEAL MODAL: 3D Fate Card & Game Show Twist -->
+  <div class="modal-overlay" id="fateModal">
+    <div class="modal-content" style="background: transparent; border: none; box-shadow: none; padding: 0; max-width: 860px;">
+      
+      <div class="fate-card-container">
+        <div class="fate-card" id="fateCard">
+          
+          <!-- Front Face: Target Locked Suspense -->
+          <div class="fate-face fate-front">
+            <div class="fate-card-title">🚨 MỤC TIÊU ĐÃ KHÓA 🚨</div>
+            <div class="student-target-name" id="fateFrontTargetName">Đang quét...</div>
+            <div style="display: flex; align-items: center; gap: 8px; color: var(--gold-bright); margin-top: 18px; font-weight: 700;">
+              <span style="display: inline-block; animation: pulseGlowGold 1s infinite;">⚡</span>
+              <span>Đang giải mã Thẻ Phán Quyết...</span>
+            </div>
+          </div>
+
+          <!-- Back Face: Revealed Fate -->
+          <div class="fate-face fate-back" id="fateBackFace">
+            <div class="fate-card-title" id="fateBackStatusHeader">KẾT QUẢ PHÁN QUYẾT</div>
+            <div class="student-target-name" id="fateBackTargetName">Học Sinh</div>
+            
+            <div class="fate-stamp" id="fateBadgeTitle">MỜI LÊN BẢNG LÀM BÀI!</div>
+            <div class="fate-subtitle" id="fateQuote">"Cơ hội tỏa sáng đã đến!"</div>
+
+            <!-- Fate Action Buttons -->
+            <div class="fate-actions">
+              <!-- If Called to Board -->
+              <button class="btn btn-gold" id="btnConfirmCalled" style="font-size: 1rem; padding: 12px 24px;">
+                Đã Xong Lượt Này
+              </button>
+              <button class="btn btn-danger" id="btnRerollStudent" title="Nếu bạn học sinh vắng mặt hoặc có lý do đột xuất">
+                Vắng Mặt / Đổi Bạn
+              </button>
+
+              <!-- If Lucky Escape Twist -->
+              <button class="btn btn-gold" id="btnHuntNextImmediately" style="display: none; font-size: 1rem; padding: 12px 24px; background: linear-gradient(135deg, var(--neon-green), #059669); color: #fff;">
+                Tiếp Tục Truy Tìm Bạn Khác
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BULK ROSTER EDIT MODAL -->
+  <div class="modal-overlay" id="bulkModal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 12px; font-size: 1.35rem; color: var(--gold-bright);">✏️ Nhập / Sửa Danh Sách Lớp</h3>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.5;">
+        Dán hoặc nhập danh sách học sinh vào ô bên dưới (<strong>mỗi học sinh một dòng</strong>). Hệ thống sẽ tự động cập nhật vào danh sách quay.
+      </p>
+      <textarea id="bulkTextarea" style="width: 100%; height: 260px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-gold); border-radius: var(--radius-sm); padding: 14px; color: #fff; font-family: inherit; font-size: 0.95rem; line-height: 1.7; resize: vertical;" placeholder="Cao Trí&#10;H. Lan&#10;H. Phúc&#10;..."></textarea>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">Số dòng: <strong id="bulkLineCount" style="color: var(--gold-bright);">0</strong> bạn</span>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-ghost" id="btnCloseBulkModal">Hủy</button>
+          <button class="btn btn-gold" id="btnSaveBulk">Lưu Danh Sách</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    Classroom Hunter &copy; 2026 &bull; Nền tảng Gameshow Gọi Tên Học Sinh Kịch Tính &bull; Tích hợp Bùa Miễn Tử Vận Mệnh
+  </footer>
+
+  <!-- Main ES Module Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

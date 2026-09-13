@@ -1,0 +1,75 @@
+/* ==========================================================================
+   DESIGN TOKENS & GAME SHOW THEME VARIABLES
+   Classroom Hunter - High-Octane Classroom Random Picker
+   ========================================================================== */
+
+:root {
+  /* Core Backgrounds - Deep Luxury Cosmic & Midnight Indigo */
+  --bg-primary: #070913;
+  --bg-secondary: #0d1224;
+  --bg-tertiary: #161c36;
+  --bg-elevated: rgba(22, 28, 54, 0.75);
+  --bg-glass: rgba(13, 18, 36, 0.8);
+  --bg-glass-card: rgba(20, 26, 52, 0.65);
+  --bg-glass-hover: rgba(30, 39, 78, 0.85);
+
+  /* Borders & Highlights */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-gold: rgba(245, 158, 11, 0.35);
+  --border-focus: rgba(245, 158, 11, 0.6);
+  --border-glowing: rgba(139, 92, 246, 0.5);
+
+  /* Game Show Signature Colors */
+  --gold-primary: #f59e0b;
+  --gold-light: #fcd34d;
+  --gold-bright: #fbbf24;
+  --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+  --gold-glow: rgba(245, 158, 11, 0.45);
+
+  /* Tech & Energy Accents */
+  --neon-cyan: #06b6d4;
+  --neon-cyan-glow: rgba(6, 182, 212, 0.4);
+  --neon-purple: #8b5cf6;
+  --neon-purple-glow: rgba(139, 92, 246, 0.45);
+
+  /* Fate Status Colors */
+  --neon-green: #10b981;
+  --neon-green-glow: rgba(16, 185, 129, 0.45);
+  --neon-danger: #ef4444;
+  --neon-danger-glow: rgba(239, 68, 68, 0.5);
+
+  /* Typography Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-gold: #fde047;
+  --text-inverse: #070913;
+
+  /* Font Families */
+  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', var(--font-main);
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 24px 60px -10px rgba(0, 0, 0, 0.8);
+  --shadow-glow-gold: 0 0 35px rgba(245, 158, 11, 0.55);
+  --shadow-glow-cyan: 0 0 30px rgba(6, 182, 212, 0.45);
+  --shadow-glow-purple: 0 0 35px rgba(139, 92, 246, 0.45);
+  --shadow-glow-green: 0 0 40px rgba(16, 185, 129, 0.55);
+
+  /* Radii */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

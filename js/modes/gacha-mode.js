@@ -1,0 +1,142 @@
+/**
+ * GACHA CHEST MODE (Mystery Box / SSR Summon)
+ * Mystical treasure chest that rumbles, cracks with golden rays, and summons the chosen student.
+ */
+
+import { audioSynthesizer } from '../core/audio-synthesizer.js';
+
+export class GachaMode {
+  constructor(container) {
+    this.container = container;
+    this.chestWrap = null;
+    this.isRunning = false;
+    this.render();
+  }
+
+  setStudents(students) {
+    this.students = students;
+  }
+
+  render() {
+    this.container.innerHTML = `
+      <div class="gacha-stage">
+        <!-- Magic Circle Background -->
+        <div class="gacha-magic-circle" id="gachaMagicCircle"></div>
+        
+        <!-- Chest Container -->
+        <div class="gacha-chest-wrap" id="gachaChestWrap" title="Bấm để mở rương thần bí">
+          <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <!-- Updated, more detailed Chest SVG -->
+            <defs>
+              <linearGradient id="chestBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#312e81"/>
+                <stop offset="100%" stop-color="#1e1b4b"/>
+              </linearGradient>
+              <linearGradient id="chestGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fde047"/>
+                <stop offset="50%" stop-color="#eab308"/>
+                <stop offset="100%" stop-color="#a16207"/>
+              </linearGradient>
+              <filter id="glowGold" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+
+            <!-- Base Shadow -->
+            <ellipse cx="100" cy="180" rx="75" ry="14" fill="rgba(0,0,0,0.8)" filter="blur(6px)" />
+            
+            <!-- Body -->
+            <rect x="30" y="85" width="140" height="85" rx="12" fill="url(#chestBody)" stroke="url(#chestGold)" stroke-width="3" />
+            <rect x="36" y="91" width="128" height="73" rx="8" fill="#0f172a" />
+            
+            <!-- Metal Bands -->
+            <rect x="50" y="85" width="18" height="85" fill="url(#chestGold)" />
+            <rect x="132" y="85" width="18" height="85" fill="url(#chestGold)" />
+            <circle cx="59" cy="125" r="4" fill="#78350f" />
+            <circle cx="141" cy="125" r="4" fill="#78350f" />
+            <circle cx="59" cy="155" r="4" fill="#78350f" />
+            <circle cx="141" cy="155" r="4" fill="#78350f" />
+
+            <!-- Lid -->
+            <path id="chestLid" d="M 25 85 Q 100 5 175 85 Z" fill="url(#chestBody)" stroke="url(#chestGold)" stroke-width="4" />
+            <path d="M 45 83 Q 100 20 155 83" fill="none" stroke="url(#chestGold)" stroke-width="6" />
+            
+            <!-- Lock -->
+            <circle cx="100" cy="90" r="18" fill="#111" stroke="url(#chestGold)" stroke-width="4" />
+            <circle cx="100" cy="90" r="10" fill="#06b6d4" filter="url(#glowGold)" />
+            <path d="M 100 84 L 100 102 M 94 90 L 106 90" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        
+        <!-- White Flash Overlay -->
+        <div class="gacha-flash-overlay" id="gachaFlash"></div>
+
+        <div style="margin-top: 30px; font-weight: 800; color: var(--gold-bright); letter-spacing: 2px; font-size: 1.15rem; text-shadow: 0 0 15px rgba(245, 158, 11, 0.8), 0 0 30px rgba(245, 158, 11, 0.4);">
+          ✨ RƯƠNG THẦN BÍ LỚP HỌC ✨
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
+          Sẵn sàng triệu hồi nhân tố bí ẩn
+        </div>
+      </div>
+    `;
+
+    this.chestWrap = this.container.querySelector('#gachaChestWrap');
+    this.magicCircle = this.container.querySelector('#gachaMagicCircle');
+    this.flashOverlay = this.container.querySelector('#gachaFlash');
+  }
+
+  startHunt(targetStudent, onComplete) {
+    if (this.isRunning) return;
+    this.isRunning = true;
+
+    if (!this.chestWrap) this.render();
+    
+    // Giai đoạn 1: Bắt đầu rung và vòng ma thuật quay
+    this.chestWrap.classList.add('rumble');
+    if (this.magicCircle) this.magicCircle.classList.add('summoning');
+
+    // Tiếng tim đập nhanh dần
+    let count = 0;
+    const interval = setInterval(() => {
+      audioSynthesizer.playHeartbeat(50 + count * 6);
+      count++;
+      
+      // Giai đoạn 2: Rung lắc dữ dội hơn
+      if (count === 6) {
+        this.chestWrap.classList.remove('rumble');
+        this.chestWrap.classList.add('intense-shake');
+      }
+
+      // Giai đoạn 3: Bùng nổ (Burst + Flash sáng chói)
+      if (count > 9) {
+        clearInterval(interval);
+        
+        this.chestWrap.classList.remove('intense-shake');
+        this.chestWrap.classList.add('burst');
+        
+        if (this.flashOverlay) this.flashOverlay.classList.add('active');
+        if (this.magicCircle) this.magicCircle.classList.add('climax');
+        
+        audioSynthesizer.playTargetLockAlarm();
+
+        // Đợi màn hình chớp sáng trắng rồi từ từ hiện thông báo
+        setTimeout(() => {
+          this.isRunning = false;
+          this.chestWrap.classList.remove('burst');
+          if (this.magicCircle) this.magicCircle.classList.remove('summoning', 'climax');
+          if (this.flashOverlay) this.flashOverlay.classList.remove('active');
+          
+          if (onComplete) onComplete(targetStudent);
+        }, 1200); 
+      }
+    }, 240);
+  }
+
+  stop() {
+    this.isRunning = false;
+    if (this.chestWrap) this.chestWrap.classList.remove('rumble', 'intense-shake', 'burst');
+    if (this.magicCircle) this.magicCircle.classList.remove('summoning', 'climax');
+    if (this.flashOverlay) this.flashOverlay.classList.remove('active');
+  }
+}
