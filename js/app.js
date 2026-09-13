@@ -214,7 +214,7 @@ class App {
     this.dom.luckRateSelect?.addEventListener('change', e => {
       classroomStore.setLuckRate(parseFloat(e.target.value));
       const percent = Math.round(parseFloat(e.target.value) * 100);
-      this.showToast(`🛡️ Đã chỉnh tỷ lệ Bùa Miễn Tử: ${percent}%`);
+      this.showToast(`🛡️ Đã chỉnh tỷ lệ God Save: ${percent}%`);
     });
 
     this.dom.eliminationToggle?.addEventListener('change', e => {
@@ -414,7 +414,7 @@ class App {
       this.dom.fateBackFace?.classList.add('fate-lucky-escape');
       if (this.dom.fateBackStatusHeader) this.dom.fateBackStatusHeader.textContent = '🛡️ VẬN MAY THẦN KỲ 🛡️';
       if (this.dom.fateBadgeTitle) {
-        this.dom.fateBadgeTitle.textContent = 'BÙA MIỄN TỬ — ĐƯỢC MIỄN!';
+        this.dom.fateBadgeTitle.textContent = 'GOD SAVE — ĐƯỢC MIỄN!';
         this.dom.fateBadgeTitle.className = 'fate-stamp stamp-lucky-escape';
       }
       if (this.dom.fateQuote) this.dom.fateQuote.textContent = `"${fate.quote}"`;

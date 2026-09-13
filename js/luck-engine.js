@@ -1,5 +1,5 @@
 /**
- * LUCK ENGINE (Bùa Miễn Tử & Vận Mệnh Lớp Học)
+ * LUCK ENGINE (God Save & Vận Mệnh Lớp Học)
  * Determines whether a student is summoned to the board or saved by a Lucky Escape twist.
  */
 
@@ -8,7 +8,7 @@ export class LuckEngine {
     'Thần may mắn mỉm cười! Thoát nạn ngoạn mục trong gang tấc!',
     'Nhân phẩm vô cực! Bạn được miễn lên bảng lần này!',
     'Hào quang nhân vật chính đã kích hoạt! An toàn tuyệt đối!',
-    'Bùa miễn tử phát huy tác dụng! Thở phào nhẹ nhõm!',
+    'God Save phát huy tác dụng! Thở phào nhẹ nhõm!',
     'Thần rùa hộ mệnh: Trúng tên nhưng không phải lên bảng!'
   ];
 
@@ -34,7 +34,7 @@ export class LuckEngine {
       return {
         isLucky: true,
         fateType: 'lucky-escape',
-        title: 'BÙA MIỄN TỬ - ĐƯỢC MIỄN!',
+        title: 'GOD SAVE - ĐƯỢC MIỄN!',
         quote
       };
     } else {
