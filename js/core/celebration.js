@@ -32,57 +32,118 @@ class CelebrationEngine {
   }
 
   createHolyFlash() {
-    // Flash Overlay
-    const flash = document.createElement('div');
-    flash.style.position = 'fixed';
-    flash.style.top = '0';
-    flash.style.left = '0';
-    flash.style.width = '100vw';
-    flash.style.height = '100vh';
-    flash.style.background = 'radial-gradient(circle, rgba(253, 224, 71, 0.7) 0%, rgba(234, 88, 12, 0.4) 40%, rgba(0,0,0,0) 80%)';
-    flash.style.zIndex = '9998';
-    flash.style.pointerEvents = 'none';
-    flash.style.opacity = '1';
-    flash.style.transition = 'opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
-    flash.style.mixBlendMode = 'screen';
-    document.body.appendChild(flash);
-    
-    // Giant God Save Text Effect
+    // 1. Dark overlay to emphasize the light
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(0,0,0,0.85)';
+    overlay.style.zIndex = '9997';
+    overlay.style.animation = 'godSaveFadeIn 0.5s forwards';
+
+    // 2. Rotating God Rays (Sunburst)
+    const rays = document.createElement('div');
+    rays.style.position = 'fixed';
+    rays.style.top = '50%';
+    rays.style.left = '50%';
+    rays.style.width = '200vw';
+    rays.style.height = '200vw';
+    rays.style.transform = 'translate(-50%, -50%)';
+    rays.style.background = 'repeating-conic-gradient(from 0deg, rgba(253, 224, 71, 0.5) 0deg 15deg, transparent 15deg 30deg)';
+    rays.style.zIndex = '9998';
+    rays.style.pointerEvents = 'none';
+    rays.style.animation = 'godSaveSpinRays 10s linear infinite, godSavePopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+
+    // 3. Giant God Save Text
+    const textWrap = document.createElement('div');
+    textWrap.style.position = 'fixed';
+    textWrap.style.top = '25%';
+    textWrap.style.left = '50%';
+    textWrap.style.transform = 'translate(-50%, -50%)';
+    textWrap.style.zIndex = '10000';
+    textWrap.style.pointerEvents = 'none';
+    textWrap.style.textAlign = 'center';
+
     const text = document.createElement('div');
-    text.textContent = 'GOD SAVE';
-    text.style.position = 'fixed';
-    text.style.top = '40%';
-    text.style.left = '50%';
-    text.style.transform = 'translate(-50%, -50%) scale(0.3)';
-    text.style.fontSize = '8rem';
+    text.innerHTML = '🛡️ GOD SAVE! 👼';
+    text.style.fontSize = '8vw';
     text.style.fontWeight = '900';
-    text.style.color = '#ffffff';
+    text.style.color = '#fff';
     text.style.webkitTextStroke = '4px #ea580c';
-    text.style.textShadow = '0 0 30px #fde047, 0 0 60px #ea580c, 10px 10px 0px rgba(0,0,0,0.8)';
-    text.style.zIndex = '10000';
-    text.style.pointerEvents = 'none';
-    text.style.opacity = '1';
-    text.style.letterSpacing = '10px';
-    text.style.transition = 'all 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
-    document.body.appendChild(text);
+    text.style.textShadow = '0 0 40px #fde047, 0 10px 0 #ea580c, 0 10px 30px rgba(0,0,0,0.8)';
+    text.style.letterSpacing = '5px';
+    text.style.animation = 'godSaveRubberBand 1.2s cubic-bezier(0.25, 1, 0.5, 1)';
+    text.style.whiteSpace = 'nowrap';
+    
+    textWrap.appendChild(text);
 
-    // Force reflow
-    void flash.offsetWidth;
-    void text.offsetWidth;
+    // 4. Add keyframes dynamically
+    const styleId = 'god-save-keyframes';
+    let style = document.getElementById(styleId);
+    if (!style) {
+      style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        @keyframes godSaveFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes godSaveSpinRays { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes godSavePopIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        @keyframes godSaveRubberBand {
+          0% { transform: scale3d(0, 0, 0); }
+          30% { transform: scale3d(1.25, 0.75, 1); }
+          40% { transform: scale3d(0.75, 1.25, 1); }
+          50% { transform: scale3d(1.15, 0.85, 1); }
+          65% { transform: scale3d(0.95, 1.05, 1); }
+          75% { transform: scale3d(1.05, 0.95, 1); }
+          100% { transform: scale3d(1, 1, 1); }
+        }
+        @keyframes godSaveFlyUp {
+          0% { transform: translateY(0) scale(0.5); opacity: 1; }
+          100% { transform: translateY(-120vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
-    // Wait a bit before animating out so the user can see it!
+    document.body.appendChild(overlay);
+    document.body.appendChild(rays);
+    document.body.appendChild(textWrap);
+
+    // 5. Emojis flying up (Arcade celebration)
+    const emojis = ['👼', '🛡️', '✨', '💛', '🌟', '🎉'];
+    const flyingElements = [];
+    for(let i=0; i<25; i++) {
+        const el = document.createElement('div');
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.position = 'fixed';
+        el.style.left = (Math.random() * 100) + 'vw';
+        el.style.bottom = '-10vh';
+        el.style.fontSize = (2 + Math.random() * 3) + 'rem';
+        el.style.zIndex = '9999';
+        el.style.pointerEvents = 'none';
+        el.style.animation = `godSaveFlyUp ${2 + Math.random()*2}s ease-in-out forwards`;
+        el.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(el);
+        flyingElements.push(el);
+    }
+
+    // 6. Cleanup after 3.5 seconds
     setTimeout(() => {
-      flash.style.opacity = '0';
-      text.style.transform = 'translate(-50%, -50%) scale(1.8)';
-      text.style.opacity = '0';
-      text.style.letterSpacing = '30px';
-    }, 1200);
+      overlay.style.transition = 'opacity 1s';
+      overlay.style.opacity = '0';
+      rays.style.transition = 'opacity 1s';
+      rays.style.opacity = '0';
+      textWrap.style.transition = 'all 1s cubic-bezier(0.5, -0.5, 0.5, 1.5)';
+      textWrap.style.transform = 'translate(-50%, -50%) scale(0)';
+    }, 3000);
 
-    // Remove from DOM after transition finishes
     setTimeout(() => {
-      flash.remove();
-      text.remove();
-    }, 3200);
+      overlay.remove();
+      rays.remove();
+      textWrap.remove();
+      flyingElements.forEach(el => el.remove());
+    }, 4000);
   }
 
   triggerEpicVictory() {

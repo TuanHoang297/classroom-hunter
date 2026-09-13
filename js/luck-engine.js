@@ -25,9 +25,9 @@ export class LuckEngine {
    * @param {number} luckRate (0.0 to 1.0)
    * @returns {{ isLucky: boolean, fateType: string, title: string, quote: string }}
    */
-  static evaluate(luckRate = 0.15) {
-    const roll = Math.random();
-    const isLucky = roll < luckRate;
+  static evaluate(luckRate = 0.5) {
+    const rand = Math.random();
+    const isLucky = rand < luckRate;
 
     if (isLucky) {
       const quote = this.LUCKY_QUOTES[Math.floor(Math.random() * this.LUCKY_QUOTES.length)];
