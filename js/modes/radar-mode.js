@@ -32,13 +32,13 @@ export class RadarMode {
     this.center = { x: size / 2, y: size / 2 };
     this.radius = size / 2 - 24;
     this.generateBlips();
-    this.drawIdle();
+    this.startIdleLoop();
   }
 
   setStudents(students) {
     this.students = students;
     this.generateBlips();
-    this.drawIdle();
+    this.startIdleLoop();
   }
 
   generateBlips() {
@@ -50,6 +50,8 @@ export class RadarMode {
         name,
         angle,
         distance,
+        angleSpeed: (Math.random() * 0.008 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
+        distSpeed: (Math.random() * 0.4 - 0.2),
         x: this.center.x + Math.cos(angle) * distance,
         y: this.center.y + Math.sin(angle) * distance,
         size: 6,
@@ -59,10 +61,38 @@ export class RadarMode {
     });
   }
 
-  drawIdle() {
-    if (this.isRunning) return;
-    this.drawRadarBase();
-    this.drawBlips();
+  startIdleLoop() {
+    if (this.idleAnimationId) cancelAnimationFrame(this.idleAnimationId);
+    this.idleLoop = () => {
+      if (!this.isRunning && this.blips.length > 0) {
+        this.updateBlipPositions();
+        this.drawRadarBase();
+        this.drawBlips();
+      }
+      this.idleAnimationId = requestAnimationFrame(this.idleLoop);
+    };
+    this.idleAnimationId = requestAnimationFrame(this.idleLoop);
+  }
+
+  updateBlipPositions(lockedIndex = -1) {
+    this.blips.forEach((blip, idx) => {
+      if (idx === lockedIndex) return; // Freeze locked target
+      
+      blip.angle += blip.angleSpeed;
+      blip.distance += blip.distSpeed;
+      
+      // Keep within radar radius
+      if (blip.distance > this.radius * 0.95) {
+        blip.distSpeed *= -1;
+        blip.distance = this.radius * 0.95;
+      } else if (blip.distance < this.radius * 0.1) {
+        blip.distSpeed *= -1;
+        blip.distance = this.radius * 0.1;
+      }
+      
+      blip.x = this.center.x + Math.cos(blip.angle) * blip.distance;
+      blip.y = this.center.y + Math.sin(blip.angle) * blip.distance;
+    });
   }
 
   drawRadarBase() {
@@ -151,6 +181,8 @@ export class RadarMode {
         audioSynthesizer.playSonarPing();
       }
 
+      const lockIdx = crosshairLocked ? targetIdx : -1;
+      this.updateBlipPositions(lockIdx);
       this.drawRadarBase();
 
       // Cycle blip highlights rapidly
@@ -200,5 +232,6 @@ export class RadarMode {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
+    this.startIdleLoop();
   }
 }
