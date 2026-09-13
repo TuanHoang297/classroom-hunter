@@ -153,31 +153,42 @@
         </div>
       </div>
 
-      <!-- Right: Settings Inline -->
-      <div class="bottom-bar-right">
-        <!-- Luck Escape Setting -->
-        <div class="form-group-inline">
-          <label for="luckRateSelect" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
-            🛡️ God Save:
-          </label>
-          <select id="luckRateSelect" class="select-cyber">
-            <option value="0">Tắt (0%)</option>
-            <option value="0.1">Hiếm (10%)</option>
-            <option value="0.15" selected>15% (Vừa)</option>
-            <option value="0.25">Cao (25%)</option>
-            <option value="0.5">Hên xui (50%)</option>
-          </select>
-        </div>
+      <!-- Right: Settings Menu -->
+      <div class="bottom-bar-right" style="position: relative;">
+        <button class="btn btn-ghost" id="btnToggleSettings" title="Tùy chỉnh tính năng">
+          ⚙️ Cài đặt
+        </button>
 
-        <!-- Elimination Toggle -->
-        <div class="form-group-inline">
-          <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
-            🚫 Không lặp:
-          </label>
-          <label class="switch" title="Khi bật, bạn học sinh đã được gọi sẽ không bị gọi lại trong tiết học này">
-            <input type="checkbox" id="eliminationToggle" checked>
-            <span class="slider"></span>
-          </label>
+        <!-- Settings Dropdown -->
+        <div id="settingsDropdown" class="settings-dropdown" style="display: none; position: absolute; bottom: 100%; right: 0; margin-bottom: 10px; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-gold); padding: 15px; border-radius: var(--radius-md); backdrop-filter: blur(10px); min-width: 250px; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);">
+          
+          <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-bright); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Cài Đặt Trò Chơi</div>
+
+          <!-- Luck Escape Setting -->
+          <div class="form-group-inline" style="justify-content: space-between; margin-bottom: 15px;">
+            <label for="luckRateSelect" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
+              🛡️ God Save:
+            </label>
+            <select id="luckRateSelect" class="select-cyber">
+              <option value="0">Tắt (0%)</option>
+              <option value="0.1">Hiếm (10%)</option>
+              <option value="0.15" selected>15% (Vừa)</option>
+              <option value="0.25">Cao (25%)</option>
+              <option value="0.5">Hên xui (50%)</option>
+            </select>
+          </div>
+
+          <!-- Elimination Toggle -->
+          <div class="form-group-inline" style="justify-content: space-between;">
+            <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">
+              🚫 Không lặp:
+            </label>
+            <label class="switch" title="Khi bật, bạn học sinh đã được gọi sẽ không bị gọi lại trong tiết học này">
+              <input type="checkbox" id="eliminationToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
         </div>
       </div>
     </section>

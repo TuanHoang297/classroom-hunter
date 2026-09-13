@@ -62,6 +62,8 @@ class App {
       // Settings
       luckRateSelect: document.getElementById('luckRateSelect'),
       eliminationToggle: document.getElementById('eliminationToggle'),
+      btnToggleSettings: document.getElementById('btnToggleSettings'),
+      settingsDropdown: document.getElementById('settingsDropdown'),
 
       // Quick Add & Chips
       quickAddInput: document.getElementById('quickAddInput'),
@@ -224,6 +226,22 @@ class App {
           ? '🚫 Đã bật chế độ: Không gọi lặp lại'
           : '🔄 Đã bật chế độ: Có thể gọi lặp lại'
       );
+    });
+
+    // Settings Dropdown Toggle
+    this.dom.btnToggleSettings?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = this.dom.settingsDropdown.style.display === 'block';
+      this.dom.settingsDropdown.style.display = isVisible ? 'none' : 'block';
+    });
+
+    // Close settings dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.dom.settingsDropdown && this.dom.settingsDropdown.style.display === 'block') {
+        if (!this.dom.settingsDropdown.contains(e.target) && e.target !== this.dom.btnToggleSettings) {
+          this.dom.settingsDropdown.style.display = 'none';
+        }
+      }
     });
 
     // Mode Switch Tabs
