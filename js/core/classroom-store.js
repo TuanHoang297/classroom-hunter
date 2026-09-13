@@ -99,7 +99,7 @@ class ClassroomStore {
       return [...this.state.students];
     }
     return this.state.students.filter(
-      name => !this.state.calledStudents.includes(name)
+      name => !this.state.calledStudents.includes(name) && !this.state.luckyEscapedStudents.includes(name)
     );
   }
 
