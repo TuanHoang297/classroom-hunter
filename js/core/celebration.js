@@ -44,7 +44,6 @@ class CelebrationEngine {
     flash.style.pointerEvents = 'none';
     flash.style.opacity = '1';
     flash.style.transition = 'opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
-    flash.style.mixBlendMode = 'overlay';
     document.body.appendChild(flash);
     
     // Giant God Save Text Effect
@@ -69,16 +68,19 @@ class CelebrationEngine {
     void flash.offsetWidth;
     void text.offsetWidth;
 
-    // Animate out
-    flash.style.opacity = '0';
-    text.style.transform = 'translate(-50%, -50%) scale(1.8)';
-    text.style.opacity = '0';
-    text.style.letterSpacing = '30px';
+    // Wait a bit before animating out so the user can see it!
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      text.style.transform = 'translate(-50%, -50%) scale(1.8)';
+      text.style.opacity = '0';
+      text.style.letterSpacing = '30px';
+    }, 1200);
 
+    // Remove from DOM after transition finishes
     setTimeout(() => {
       flash.remove();
       text.remove();
-    }, 2000);
+    }, 3200);
   }
 
   triggerEpicVictory() {
