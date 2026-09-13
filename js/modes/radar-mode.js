@@ -42,6 +42,7 @@ export class RadarMode {
   }
 
   generateBlips() {
+    this.lockedTargetIdx = -1;
     this.blips = this.students.map((name, i) => {
       // Distribute pseudo-randomly within radar circle
       const angle = (i / Math.max(1, this.students.length)) * Math.PI * 2 + Math.random() * 0.2;
@@ -65,9 +66,10 @@ export class RadarMode {
     if (this.idleAnimationId) cancelAnimationFrame(this.idleAnimationId);
     this.idleLoop = () => {
       if (!this.isRunning && this.blips.length > 0) {
-        this.updateBlipPositions();
+        const lockIdx = this.lockedTargetIdx !== undefined ? this.lockedTargetIdx : -1;
+        this.updateBlipPositions(lockIdx);
         this.drawRadarBase();
-        this.drawBlips();
+        this.drawBlips(lockIdx);
       }
       this.idleAnimationId = requestAnimationFrame(this.idleLoop);
     };
@@ -154,6 +156,7 @@ export class RadarMode {
   startHunt(targetStudent, onComplete) {
     if (this.isRunning) return;
     this.isRunning = true;
+    this.lockedTargetIdx = -1;
     this.targetStudent = targetStudent;
 
     if (this.radarBeam) this.radarBeam.classList.add('sweeping');
@@ -212,6 +215,7 @@ export class RadarMode {
       if (progress < 1) {
         this.animationId = requestAnimationFrame(animate);
       } else {
+        this.lockedTargetIdx = targetIdx;
         this.isRunning = false;
         // Chờ 800ms để quan sát mục tiêu bị khóa
         setTimeout(() => {
@@ -225,6 +229,7 @@ export class RadarMode {
 
   stop() {
     this.isRunning = false;
+    this.lockedTargetIdx = -1;
     if (this.radarBeam) this.radarBeam.classList.remove('sweeping');
     if (this.radarCrosshair) this.radarCrosshair.classList.remove('active');
     if (this.container) this.container.classList.remove('target-locked');
