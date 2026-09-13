@@ -25,7 +25,12 @@ class AudioSynthesizer {
     this.muted = isMuted;
   }
 
-  isMuted() {
+  toggleMute() {
+    this.muted = !this.muted;
+    return this.muted;
+  }
+
+  get isMuted() {
     return this.muted;
   }
 
