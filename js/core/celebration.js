@@ -39,24 +39,26 @@ class CelebrationEngine {
     flash.style.left = '0';
     flash.style.width = '100vw';
     flash.style.height = '100vh';
-    flash.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(253,224,71,0.6) 50%, rgba(0,0,0,0) 100%)';
+    flash.style.background = 'radial-gradient(circle, rgba(253, 224, 71, 0.7) 0%, rgba(234, 88, 12, 0.4) 40%, rgba(0,0,0,0) 80%)';
     flash.style.zIndex = '9998';
     flash.style.pointerEvents = 'none';
     flash.style.opacity = '1';
     flash.style.transition = 'opacity 2s cubic-bezier(0.1, 0.8, 0.2, 1)';
+    flash.style.mixBlendMode = 'screen';
     document.body.appendChild(flash);
     
     // Giant God Save Text Effect
     const text = document.createElement('div');
     text.textContent = 'GOD SAVE';
     text.style.position = 'fixed';
-    text.style.top = '50%';
+    text.style.top = '40%';
     text.style.left = '50%';
     text.style.transform = 'translate(-50%, -50%) scale(0.3)';
     text.style.fontSize = '8rem';
     text.style.fontWeight = '900';
-    text.style.color = '#fff';
-    text.style.textShadow = '0 0 40px #fde047, 0 0 80px #f59e0b, 0 0 150px #ea580c';
+    text.style.color = '#ffffff';
+    text.style.webkitTextStroke = '4px #ea580c';
+    text.style.textShadow = '0 0 30px #fde047, 0 0 60px #ea580c, 10px 10px 0px rgba(0,0,0,0.8)';
     text.style.zIndex = '10000';
     text.style.pointerEvents = 'none';
     text.style.opacity = '1';
