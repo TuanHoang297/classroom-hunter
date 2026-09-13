@@ -124,7 +124,7 @@ class AudioSynthesizer {
   }
 
   /**
-   * Lucky Escape / Bùa Miễn Tử Angelic Chime (Celestial Arpeggio)
+   * Epic God Save Angelic Chime + Bass Drop
    */
   playLuckyEscape() {
     if (this.muted) return;
@@ -132,25 +132,58 @@ class AudioSynthesizer {
     if (!this.ctx) return;
 
     const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; // C Major high arpeggio
+    
+    // Deep Bass Drop (Impact)
+    const bass = this.ctx.createOscillator();
+    const bassGain = this.ctx.createGain();
+    bass.type = 'sine';
+    bass.frequency.setValueAtTime(150, now);
+    bass.frequency.exponentialRampToValueAtTime(30, now + 1.5);
+    bassGain.gain.setValueAtTime(1, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.01, now + 2);
+    bass.connect(bassGain);
+    bassGain.connect(this.ctx.destination);
+    bass.start(now);
+    bass.stop(now + 2);
 
+    // Angelic Choir / Major Chord Swell
+    const chord = [523.25, 659.25, 783.99, 1046.50]; // C Major
+    chord.forEach((freq) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq + (Math.random()*4 - 2), now); // slight detune
+      
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.15, now + 0.3); // Swell
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 2.5); // Fade
+      
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      
+      osc.start(now);
+      osc.stop(now + 3);
+    });
+
+    // High Arpeggio (Sparkles)
+    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
     notes.forEach((freq, index) => {
-      const time = now + index * 0.09;
+      const time = now + index * 0.12; // Slower, more majestic arpeggio
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
-      osc.type = 'triangle';
+      osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, time);
 
-      gain.gain.setValueAtTime(0, time);
-      gain.gain.linearRampToValueAtTime(0.35, time + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.8);
+      gain.gain.setValueAtTime(0.15, time);
+      gain.gain.exponentialRampToValueAtTime(0.01, time + 0.6);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
       osc.start(time);
-      osc.stop(time + 0.8);
+      osc.stop(time + 1);
     });
   }
 

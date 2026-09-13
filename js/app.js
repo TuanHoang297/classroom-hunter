@@ -466,7 +466,7 @@ class App {
       this.dom.fateCard?.classList.add('flipped');
 
       if (fate.isLucky) {
-        audioSynthesizer.playLuckyFanfare();
+        audioSynthesizer.playLuckyEscape();
         celebrationEngine.triggerLuckyBurst();
       } else {
         audioSynthesizer.playTargetLockAlarm();
