@@ -69,6 +69,9 @@ export class GachaMode {
           </svg>
         </div>
         
+        <!-- Name Display Overlay -->
+        <div id="gachaNameDisplay" style="position: absolute; top: 15%; width: 100%; text-align: center; font-size: 2.2rem; font-weight: 800; color: #fff; text-shadow: 0 0 15px #0ea5e9, 0 0 30px #0ea5e9; opacity: 0; transform: translateY(10px); transition: all 0.2s ease; z-index: 5; letter-spacing: 2px;"></div>
+
         <!-- White Flash Overlay -->
         <div class="gacha-flash-overlay" id="gachaFlash"></div>
 
@@ -84,6 +87,7 @@ export class GachaMode {
     this.chestWrap = this.container.querySelector('#gachaChestWrap');
     this.magicCircle = this.container.querySelector('#gachaMagicCircle');
     this.flashOverlay = this.container.querySelector('#gachaFlash');
+    this.nameDisplay = this.container.querySelector('#gachaNameDisplay');
   }
 
   startHunt(targetStudent, onComplete) {
@@ -95,9 +99,22 @@ export class GachaMode {
     // Giai đoạn 1: Bắt đầu rung và vòng ma thuật quay
     this.chestWrap.classList.add('rumble');
     if (this.magicCircle) this.magicCircle.classList.add('summoning');
+    
+    if (this.nameDisplay) {
+      this.nameDisplay.style.opacity = '1';
+      this.nameDisplay.style.transform = 'translateY(0)';
+    }
 
     // Tiếng tim đập nhanh dần
     let count = 0;
+    
+    // Name rolling interval
+    this.nameRollInterval = setInterval(() => {
+      if (this.nameDisplay && this.students && this.students.length > 0) {
+        this.nameDisplay.textContent = this.students[Math.floor(Math.random() * this.students.length)];
+      }
+    }, 60);
+
     const interval = setInterval(() => {
       audioSynthesizer.playHeartbeat(50 + count * 6);
       count++;
@@ -111,6 +128,12 @@ export class GachaMode {
       // Giai đoạn 3: Bùng nổ (Burst + Flash sáng chói)
       if (count > 9) {
         clearInterval(interval);
+        if (this.nameRollInterval) clearInterval(this.nameRollInterval);
+        
+        if (this.nameDisplay) {
+          this.nameDisplay.style.opacity = '0';
+          this.nameDisplay.style.transform = 'translateY(-20px)';
+        }
         
         this.chestWrap.classList.remove('intense-shake');
         this.chestWrap.classList.add('burst');
@@ -135,6 +158,8 @@ export class GachaMode {
 
   stop() {
     this.isRunning = false;
+    if (this.nameRollInterval) clearInterval(this.nameRollInterval);
+    if (this.nameDisplay) this.nameDisplay.style.opacity = '0';
     if (this.chestWrap) this.chestWrap.classList.remove('rumble', 'intense-shake', 'burst');
     if (this.magicCircle) this.magicCircle.classList.remove('summoning', 'climax');
     if (this.flashOverlay) this.flashOverlay.classList.remove('active');

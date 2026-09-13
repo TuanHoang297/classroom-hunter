@@ -26,6 +26,14 @@ class CelebrationEngine {
     this.canvas.height = window.innerHeight;
   }
 
+  triggerLuckyBurst() {
+    this.explode('lucky');
+  }
+
+  triggerEpicVictory() {
+    this.explode('default');
+  }
+
   /**
    * Launch colorful confetti explosion
    */

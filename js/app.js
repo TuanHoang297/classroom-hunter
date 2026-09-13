@@ -452,6 +452,7 @@ class App {
         celebrationEngine.triggerLuckyBurst();
       } else {
         audioSynthesizer.playTargetLockAlarm();
+        celebrationEngine.triggerEpicVictory(); // Bắn pháo hoa cho cả trường hợp bình thường
       }
     }, 850);
   }
