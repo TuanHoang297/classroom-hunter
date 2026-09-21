@@ -23,11 +23,12 @@ export class LuckEngine {
   /**
    * Evaluates fate based on the luck probability rate
    * @param {number} luckRate (0.0 to 1.0)
+   * @param {boolean} forceNoLuck (if true, forces a non-lucky outcome)
    * @returns {{ isLucky: boolean, fateType: string, title: string, quote: string }}
    */
-  static evaluate(luckRate = 0.5) {
+  static evaluate(luckRate = 0.5, forceNoLuck = false) {
     const rand = Math.random();
-    const isLucky = rand < luckRate;
+    const isLucky = forceNoLuck ? false : rand < luckRate;
 
     if (isLucky) {
       const quote = this.LUCKY_QUOTES[Math.floor(Math.random() * this.LUCKY_QUOTES.length)];

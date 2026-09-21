@@ -18,7 +18,7 @@ class ClassroomStore {
       luckyEscapedStudents: [],
       currentSelected: null,
       currentFate: null,
-      luckRate: 0.5,
+      luckRate: 0.25,
       activeMode: 'radar',
       eliminationMode: true,
       isMuted: false

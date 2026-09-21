@@ -22,6 +22,7 @@ class App {
 
     this.currentCandidate = null;
     this.currentFate = null;
+    this.lastWasLucky = false;
 
     this.dom = {};
   }
@@ -389,7 +390,8 @@ class App {
     this.currentCandidate = targetStudent;
 
     // Evaluate luck outcome
-    const fate = LuckEngine.evaluate(classroomStore.getState().luckRate);
+    const fate = LuckEngine.evaluate(classroomStore.getState().luckRate, this.lastWasLucky);
+    this.lastWasLucky = fate.isLucky;
     this.currentFate = fate;
 
     const activeMode = classroomStore.getState().activeMode;
