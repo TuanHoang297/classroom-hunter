@@ -79,7 +79,7 @@ export class GridMode {
         if (currentStep >= totalSteps - 1) {
           activeCard.classList.add('target-locked');
           // Cuộn màn hình ở bước cuối cùng
-          activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
           activeCard.classList.add('highlight');
           // Add random glitch occasionally
