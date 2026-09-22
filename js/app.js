@@ -11,6 +11,7 @@ import { LuckEngine } from './luck-engine.js';
 import { RadarMode } from './modes/radar-mode.js';
 import { GridMode } from './modes/grid-mode.js';
 import { GachaMode } from './modes/gacha-mode.js';
+import { cryptoPick } from './utils/random.js';
 
 class App {
   constructor() {
@@ -385,8 +386,8 @@ class App {
       this.dom.btnLaunchHunt.disabled = true;
     }
 
-    // Pick candidate randomly
-    const targetStudent = remaining[Math.floor(Math.random() * remaining.length)];
+    // Pick candidate randomly — dùng crypto random để tránh PRNG lặp sequence
+    const targetStudent = cryptoPick(remaining);
     this.currentCandidate = targetStudent;
 
     // Evaluate luck outcome

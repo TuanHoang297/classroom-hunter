@@ -37,9 +37,13 @@ class ClassroomStore {
         } else {
           this.state.students = [...this.DEFAULT_ROSTER];
         }
-        // Luôn làm mới lượt gọi khi vào web
-        this.state.calledStudents = [];
-        this.state.luckyEscapedStudents = [];
+        // Giữ lại calledStudents & luckyEscapedStudents qua reload để tránh gọi lặp
+        if (Array.isArray(parsed.calledStudents)) {
+          this.state.calledStudents = parsed.calledStudents;
+        }
+        if (Array.isArray(parsed.luckyEscapedStudents)) {
+          this.state.luckyEscapedStudents = parsed.luckyEscapedStudents;
+        }
         if (typeof parsed.luckRate === 'number') {
           this.state.luckRate = parsed.luckRate;
         }

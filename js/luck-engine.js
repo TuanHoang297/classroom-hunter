@@ -1,7 +1,10 @@
 /**
  * LUCK ENGINE (God Save & Vận Mệnh Lớp Học)
  * Determines whether a student is summoned to the board or saved by a Lucky Escape twist.
+ * Dùng crypto.getRandomValues() thay Math.random() để tránh lặp sequence.
  */
+
+import { cryptoRandom, cryptoPick } from './utils/random.js';
 
 export class LuckEngine {
   static LUCKY_QUOTES = [
@@ -27,24 +30,22 @@ export class LuckEngine {
    * @returns {{ isLucky: boolean, fateType: string, title: string, quote: string }}
    */
   static evaluate(luckRate = 0.5, forceNoLuck = false) {
-    const rand = Math.random();
+    const rand = cryptoRandom();
     const isLucky = forceNoLuck ? false : rand < luckRate;
 
     if (isLucky) {
-      const quote = this.LUCKY_QUOTES[Math.floor(Math.random() * this.LUCKY_QUOTES.length)];
       return {
         isLucky: true,
         fateType: 'lucky-escape',
         title: 'GOD SAVE - ĐƯỢC MIỄN!',
-        quote
+        quote: cryptoPick(this.LUCKY_QUOTES)
       };
     } else {
-      const quote = this.MUST_ANSWER_QUOTES[Math.floor(Math.random() * this.MUST_ANSWER_QUOTES.length)];
       return {
         isLucky: false,
         fateType: 'must-answer',
         title: 'MỜI LÊN BẢNG LÀM BÀI!',
-        quote
+        quote: cryptoPick(this.MUST_ANSWER_QUOTES)
       };
     }
   }

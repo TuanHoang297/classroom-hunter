@@ -4,6 +4,7 @@
  */
 
 import { audioSynthesizer } from '../core/audio-synthesizer.js';
+import { cryptoShuffle, cryptoRandomInt } from '../utils/random.js';
 
 export class GridMode {
   constructor(container) {
@@ -54,25 +55,37 @@ export class GridMode {
     this.isRunning = true;
     this.container.classList.add('is-hunting');
 
-    let currentIndex = Math.floor(Math.random() * this.students.length);
+    // Tạo chuỗi nhảy ngẫu nhiên thực sự bằng Fisher-Yates shuffle theo chu kỳ
+    const n = this.students.length;
+    const totalSteps = Math.max(n * 2, 35) + cryptoRandomInt(15);
     
+    // Xây dựng sequence: shuffle nhiều vòng rồi kết thúc bằng targetIdx
+    const buildSequence = () => {
+      const seq = [];
+      const rounds = Math.ceil(totalSteps / n) + 1;
+      for (let r = 0; r < rounds; r++) {
+        const arr = Array.from({ length: n }, (_, i) => i);
+        // Dùng cryptoShuffle — Fisher-Yates với crypto entropy
+        cryptoShuffle(arr);
+        seq.push(...arr);
+      }
+      return seq;
+    };
+
+    const sequence = buildSequence();
+    // Đảm bảo bước cuối là target
+    sequence[totalSteps - 1] = targetIdx;
+
+    let currentIndex = sequence[0];
     let delay = 40;
     const maxDelay = 380;
-    const totalSteps = 35 + Math.floor(Math.random() * 15);
     let currentStep = 0;
 
     const step = () => {
       this.cardElements.forEach(c => c.classList.remove('highlight', 'target-locked', 'glitch-anim'));
 
-      // Nhảy ngẫu nhiên, bước cuối cùng ép vào mục tiêu
-      if (currentStep >= totalSteps - 1) {
-        currentIndex = targetIdx;
-      } else {
-        // Nhảy ngẫu nhiên hoàn toàn sang 1 ô khác
-        let next = Math.floor(Math.random() * this.students.length);
-        if (next === currentIndex) next = (next + 1) % this.students.length;
-        currentIndex = next;
-      }
+      // Lấy index từ sequence đã shuffle sẵn
+      currentIndex = sequence[Math.min(currentStep, totalSteps - 1)];
 
       const activeCard = this.cardElements[currentIndex];
       if (activeCard) {
@@ -83,7 +96,7 @@ export class GridMode {
         } else {
           activeCard.classList.add('highlight');
           // Add random glitch occasionally
-          if (Math.random() > 0.6) activeCard.classList.add('glitch-anim');
+          if (cryptoRandomInt(10) > 6) activeCard.classList.add('glitch-anim');
         }
       }
 
